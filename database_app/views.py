@@ -4,17 +4,8 @@ from .serializers import MetaDataSerializer, ChunkDataSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
-from rest_framework import status
-
-# 上传
-class MetaDataViewSet(viewsets.ModelViewSet):
-    queryset = MetaData.objects.all()
-    serializer_class = MetaDataSerializer
-
-class ChunkDataViewSet(viewsets.ModelViewSet):
-    queryset = ChunkData.objects.all()
-    serializer_class = ChunkDataSerializer
-
+from rest_framework import status,viewsets
+from django.http.response import JsonResponse
 
 class MetaDataListCreateView(generics.ListCreateAPIView):
     queryset = MetaData.objects.all()
@@ -23,11 +14,6 @@ class MetaDataListCreateView(generics.ListCreateAPIView):
 class ChunkDataListCreateView(generics.ListCreateAPIView):
     queryset = ChunkData.objects.all()
     serializer_class = ChunkDataSerializer
-
-class ChunkDataRetrieveView(generics.RetrieveAPIView):
-    queryset = ChunkData.objects.all()
-    serializer_class = ChunkDataSerializer
-    lookup_field = '_id'
     
 class MetaDataRetrieveView(generics.ListAPIView):
     queryset = MetaData.objects.filter(filename='file100.sgy')
@@ -67,3 +53,20 @@ class FileUploadView(APIView):
             return Response({'message': 'File uploaded successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+        
+class DataListView(APIView):
+    def get(self, request):   
+        file_id = "6530851fd67374b6fef700fa"
+        chunkdata = ChunkData.objects.filter(file_id=file_id).order_by('n')
+        
+        # 将查询结果序列化为JSON
+        data = [{'_id': item._id, 'n': item.n, 'data': item.data.hex()} for item in chunkdata]
+
+        return JsonResponse(data, safe=False)
+    
+class ChunkDataList(generics.ListAPIView):
+    serializer_class = ChunkDataSerializer
+
+    def get_queryset(self):
+        file_id = self.kwargs['file_id']
+        return ChunkData.objects.filter(file_id=file_id)

@@ -15,4 +15,4 @@ class ChunkData(models.Model):
     _id = models.CharField(primary_key=True, max_length=255)
     n = models.IntegerField()
     data = models.BinaryField()
-    file_id  = models.ForeignKey(MetaData, on_delete=models.CASCADE)
+    file  = models.ForeignKey(MetaData, on_delete=models.CASCADE) # 注意这个字段会自动拼接成file_id
