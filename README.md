@@ -13,6 +13,7 @@ virtualenv cmlakehouse_django
 # 3. 启动虚拟环境
 ```bash
 cd cmlakehouse_django
+
 source bin/activate
 ```
 
