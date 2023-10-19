@@ -23,6 +23,7 @@ pip install -r requirements.txt
 ```
 
 # 5. 编写自己的local_settings.py
+- 根据自己的配置，写入信息
 
 # 6. 运行
 ```bash
